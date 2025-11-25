@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.HistoryController"
+      spacing="24"
+      styleClass="screen-container">
+
+    <padding>
+        <Insets top="32" right="32" bottom="32" left="32"/>
+    </padding>
+
+    <!-- Screen Title -->
+    <Label text="Results History" styleClass="screen-title"/>
+
+    <!-- Filters -->
+    <VBox styleClass="card" spacing="16">
+        <Label text="Filters" styleClass="section-title"/>
+        <HBox spacing="24">
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="From:"/>
+                <DatePicker fx:id="dateFrom" promptText="Start date"/>
+            </HBox>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="To:"/>
+                <DatePicker fx:id="dateTo" promptText="End date"/>
+            </HBox>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Test ID:"/>
+                <ComboBox fx:id="cmbTestId" promptText="All" prefWidth="150"/>
+            </HBox>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Status:"/>
+                <ComboBox fx:id="cmbStatus" promptText="All" prefWidth="150"/>
+            </HBox>
+        </HBox>
+        <HBox spacing="12">
+            <TextField fx:id="txtStudentId" promptText="Search by Student ID..." prefWidth="300"/>
+            <Button fx:id="btnSearch" text="🔍 Search" styleClass="button-primary" onAction="#search"/>
+            <Button fx:id="btnClear" text="Clear" styleClass="button-secondary" onAction="#clearFilters"/>
+        </HBox>
+    </VBox>
+
+    <!-- Results Table -->
+    <VBox styleClass="card" spacing="12" VBox.vgrow="ALWAYS">
+        <TableView fx:id="tblResults" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colCheckbox" text="" prefWidth="40"/>
+                <TableColumn fx:id="colDate" text="Date" prefWidth="100"/>
+                <TableColumn fx:id="colStudentId" text="Student ID" prefWidth="120"/>
+                <TableColumn fx:id="colTestId" text="Test ID" prefWidth="80"/>
+                <TableColumn fx:id="colAnswerKey" text="Answer Key" prefWidth="150"/>
+                <TableColumn fx:id="colScore" text="Score" prefWidth="80"/>
+                <TableColumn fx:id="colStatus" text="Status" prefWidth="80"/>
+            </columns>
+        </TableView>
+
+        <!-- Pagination -->
+        <HBox spacing="12" alignment="CENTER">
+            <Button fx:id="btnPrev" text="◀ Prev" styleClass="button-secondary" onAction="#prevPage"/>
+            <Label fx:id="lblPageInfo" text="Page 1 of 1"/>
+            <Button fx:id="btnNext" text="Next ▶" styleClass="button-secondary" onAction="#nextPage"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblResultInfo" text="Showing 0-0 of 0 results" styleClass="label-muted"/>
+        </HBox>
+    </VBox>
+
+    <!-- Statistics -->
+    <HBox spacing="16">
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblTotalScans" text="0" styleClass="stat-number"/>
+            <Label text="Total Scans" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblAvgScore" text="0.0%" styleClass="stat-number"/>
+            <Label text="Average Score" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblHighScore" text="0.0%" styleClass="stat-number stat-success"/>
+            <Label text="Highest" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblLowScore" text="0.0%" styleClass="stat-number stat-error"/>
+            <Label text="Lowest" styleClass="stat-label"/>
+        </VBox>
+    </HBox>
+
+    <!-- Action Buttons -->
+    <HBox spacing="12">
+        <Button fx:id="btnViewDetails" text="👁 View Details" styleClass="button-primary" onAction="#viewDetails"/>
+        <Button fx:id="btnDelete" text="🗑 Delete Selected" styleClass="button-destructive" onAction="#deleteSelected"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnExport" text="📤 Export Selected" styleClass="button-secondary" onAction="#exportSelected"/>
+    </HBox>
+
+</VBox>
+

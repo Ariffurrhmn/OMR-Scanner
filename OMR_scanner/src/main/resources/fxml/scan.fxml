@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="org.example.controller.ScanController"
+           dividerPositions="0.5"
+           styleClass="screen-container">
+
+    <!-- LEFT PANEL: Image Preview -->
+    <VBox spacing="16" styleClass="panel">
+        <padding>
+            <Insets top="24" right="24" bottom="24" left="24"/>
+        </padding>
+
+        <!-- Image Preview Area -->
+        <VBox styleClass="card" VBox.vgrow="ALWAYS">
+            <Label text="Image Preview" styleClass="section-title"/>
+            <ScrollPane fx:id="imageScrollPane" fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="image-preview">
+                <StackPane fx:id="imageContainer" minHeight="300">
+                    <ImageView fx:id="imagePreview" preserveRatio="true"/>
+                </StackPane>
+            </ScrollPane>
+        </VBox>
+
+        <!-- Zoom & Overlay Controls -->
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <Label text="Zoom:"/>
+            <Slider fx:id="zoomSlider" min="25" max="400" value="100" showTickLabels="true" majorTickUnit="100" minWidth="200"/>
+            <Label fx:id="zoomLabel" text="100%"/>
+        </HBox>
+
+        <HBox spacing="16">
+            <CheckBox fx:id="chkStudentId" text="Student ID" selected="true"/>
+            <CheckBox fx:id="chkTestId" text="Test ID" selected="true"/>
+            <CheckBox fx:id="chkAnswerBlocks" text="Answer Blocks" selected="true"/>
+        </HBox>
+
+        <!-- Action Buttons -->
+        <HBox spacing="12">
+            <Button fx:id="btnLoadImage" text="📂 Load Image" styleClass="button-secondary" onAction="#loadImage"/>
+            <Button fx:id="btnProcess" text="▶ Process" styleClass="button-primary" onAction="#process"/>
+        </HBox>
+
+        <!-- Processing Log -->
+        <VBox spacing="8" VBox.vgrow="ALWAYS">
+            <Label text="Processing Log" styleClass="section-title"/>
+            <TextArea fx:id="logArea" prefRowCount="10" minHeight="150" editable="false" 
+                      promptText="Processing steps will appear here..."
+                      styleClass="log-area" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </VBox>
+
+    <!-- RIGHT PANEL: Results -->
+    <VBox spacing="16" styleClass="panel">
+        <padding>
+            <Insets top="24" right="24" bottom="24" left="24"/>
+        </padding>
+
+        <!-- Extracted IDs -->
+        <VBox styleClass="card" spacing="12">
+            <Label text="Extracted IDs" styleClass="section-title"/>
+            
+            <HBox spacing="24">
+                <VBox spacing="4">
+                    <Label text="Student ID" styleClass="label-muted"/>
+                    <TextField fx:id="txtStudentId" editable="false" styleClass="id-field"/>
+                    <Label fx:id="lblStudentIdStatus" styleClass="label-success"/>
+                </VBox>
+                <VBox spacing="4">
+                    <Label text="Test ID" styleClass="label-muted"/>
+                    <TextField fx:id="txtTestId" editable="false" styleClass="id-field"/>
+                    <Label fx:id="lblTestIdStatus" styleClass="label-success"/>
+                </VBox>
+            </HBox>
+
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="Answer Key:"/>
+                <ComboBox fx:id="cmbAnswerKey" promptText="Select Answer Key" prefWidth="200"/>
+                <Label fx:id="lblAutoDetected" text="" styleClass="label-muted"/>
+            </HBox>
+        </VBox>
+
+        <!-- Answers Table -->
+        <VBox styleClass="card" spacing="12" VBox.vgrow="ALWAYS">
+            <Label text="Answers" styleClass="section-title"/>
+            <TableView fx:id="tblAnswers" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colQuestion" text="#" prefWidth="50"/>
+                    <TableColumn fx:id="colAnswer" text="Answer" prefWidth="80"/>
+                    <TableColumn fx:id="colKey" text="Key" prefWidth="80"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="80"/>
+                </columns>
+            </TableView>
+        </VBox>
+
+        <!-- Score -->
+        <VBox styleClass="card" spacing="12">
+            <Label text="Score" styleClass="section-title"/>
+            <ProgressBar fx:id="progressScore" progress="0" prefWidth="Infinity" styleClass="score-bar"/>
+            <HBox spacing="24">
+                <Label fx:id="lblScore" text="0/60 (0.0%)" styleClass="score-text"/>
+            </HBox>
+            <HBox spacing="24">
+                <Label fx:id="lblCorrect" text="Correct: 0" styleClass="label-success"/>
+                <Label fx:id="lblWrong" text="Wrong: 0" styleClass="label-error"/>
+                <Label fx:id="lblSkipped" text="Skipped: 0" styleClass="label-muted"/>
+                <Label fx:id="lblInvalid" text="Invalid: 0" styleClass="label-warning"/>
+            </HBox>
+        </VBox>
+
+        <!-- Action Buttons -->
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <Button fx:id="btnSave" text="💾 Save" styleClass="button-primary" onAction="#save"/>
+            <Button fx:id="btnExport" text="📤 Export" styleClass="button-secondary" onAction="#export"/>
+            <Button fx:id="btnRescan" text="🔄 Rescan" styleClass="button-secondary" onAction="#rescan"/>
+        </HBox>
+    </VBox>
+
+</SplitPane>

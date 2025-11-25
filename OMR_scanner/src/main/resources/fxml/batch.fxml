@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.BatchController"
+      spacing="24"
+      styleClass="screen-container">
+
+    <padding>
+        <Insets top="32" right="32" bottom="32" left="32"/>
+    </padding>
+
+    <!-- Screen Title -->
+    <Label text="Batch Processing" styleClass="screen-title"/>
+
+    <!-- Source Selection -->
+    <VBox styleClass="card" spacing="16">
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Source Folder:" prefWidth="120"/>
+            <TextField fx:id="txtSourceFolder" promptText="Select folder containing scanned sheets..." HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnBrowse" text="📂 Browse" styleClass="button-secondary" onAction="#browseFolder"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Answer Key:" prefWidth="120"/>
+            <ComboBox fx:id="cmbAnswerKey" promptText="Auto-detect by Test ID" prefWidth="300"/>
+        </HBox>
+    </VBox>
+
+    <!-- File List -->
+    <VBox styleClass="card" spacing="12" VBox.vgrow="ALWAYS">
+        <Label text="Files" styleClass="section-title"/>
+        <TableView fx:id="tblFiles" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="colCheckbox" text="" prefWidth="40"/>
+                <TableColumn fx:id="colStatus" text="Status" prefWidth="70"/>
+                <TableColumn fx:id="colFilename" text="Filename" prefWidth="200"/>
+                <TableColumn fx:id="colStudentId" text="Student ID" prefWidth="120"/>
+                <TableColumn fx:id="colTestId" text="Test ID" prefWidth="80"/>
+                <TableColumn fx:id="colScore" text="Score" prefWidth="80"/>
+                <TableColumn fx:id="colIssues" text="Issues" prefWidth="150"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <!-- Progress -->
+    <VBox styleClass="card" spacing="12">
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <Label text="Progress:" styleClass="section-title"/>
+            <ProgressBar fx:id="progressBar" progress="0" prefWidth="400"/>
+            <Label fx:id="lblProgress" text="0% (0/0 files)"/>
+        </HBox>
+        <HBox spacing="24">
+            <Label fx:id="lblElapsed" text="Elapsed: 00:00:00" styleClass="label-muted"/>
+            <Label fx:id="lblRemaining" text="Remaining: --:--:--" styleClass="label-muted"/>
+        </HBox>
+    </VBox>
+
+    <!-- Summary -->
+    <HBox spacing="16">
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblSuccessful" text="0" styleClass="stat-number stat-success"/>
+            <Label text="Successful" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblReview" text="0" styleClass="stat-number stat-warning"/>
+            <Label text="Needs Review" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblFailed" text="0" styleClass="stat-number stat-error"/>
+            <Label text="Failed" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+            <Label fx:id="lblPending" text="0" styleClass="stat-number stat-muted"/>
+            <Label text="Pending" styleClass="stat-label"/>
+        </VBox>
+    </HBox>
+
+    <!-- Action Buttons -->
+    <HBox spacing="12">
+        <Button fx:id="btnStart" text="▶ Start" styleClass="button-primary" onAction="#startBatch"/>
+        <Button fx:id="btnPause" text="⏸ Pause" styleClass="button-secondary" disable="true" onAction="#pauseBatch"/>
+        <Button fx:id="btnStop" text="⏹ Stop" styleClass="button-secondary" disable="true" onAction="#stopBatch"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnReviewIssues" text="👁 Review Issues" styleClass="button-secondary" onAction="#reviewIssues"/>
+        <Button fx:id="btnExportAll" text="📤 Export All" styleClass="button-secondary" onAction="#exportAll"/>
+    </HBox>
+
+</VBox>
+

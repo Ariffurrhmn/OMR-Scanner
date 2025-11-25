@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.AnswerKeyController"
+      spacing="0"
+      styleClass="screen-container">
+
+    <!-- LEFT: Answer Keys List -->
+    <VBox spacing="16" styleClass="sidebar-panel" prefWidth="280">
+        <padding>
+            <Insets top="24" right="16" bottom="24" left="24"/>
+        </padding>
+
+        <Label text="Answer Keys" styleClass="screen-title"/>
+
+        <!-- Search -->
+        <TextField fx:id="searchField" promptText="🔍 Search..." styleClass="search-field"/>
+
+        <!-- Keys List -->
+        <ListView fx:id="keysList" VBox.vgrow="ALWAYS" styleClass="keys-list">
+            <!-- Populated dynamically -->
+        </ListView>
+
+        <!-- List Actions -->
+        <HBox spacing="8">
+            <Button fx:id="btnNew" text="➕ New" styleClass="button-primary" 
+                    onAction="#createNewKey" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button fx:id="btnDuplicate" text="📋" styleClass="button-secondary"
+                    onAction="#duplicateKey"/>
+            <Button fx:id="btnDelete" text="🗑" styleClass="button-destructive"
+                    onAction="#deleteKey"/>
+        </HBox>
+    </VBox>
+
+    <Separator orientation="VERTICAL"/>
+
+    <!-- RIGHT: Editor -->
+    <VBox spacing="24" HBox.hgrow="ALWAYS">
+        <padding>
+            <Insets top="24" right="24" bottom="24" left="24"/>
+        </padding>
+
+        <Label text="Editor" styleClass="screen-title"/>
+
+        <!-- Name & Test ID -->
+        <VBox styleClass="card" spacing="16">
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Name:" prefWidth="80"/>
+                <TextField fx:id="nameField" promptText="e.g., Final Exam 2025" HBox.hgrow="ALWAYS"/>
+            </HBox>
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <Label text="Test ID:" prefWidth="80"/>
+                <TextField fx:id="testIdField" promptText="e.g., 1001" prefWidth="120"/>
+                <Label text="(4-digit, for auto-detection)" styleClass="label-muted"/>
+            </HBox>
+        </VBox>
+
+        <!-- Answers Grid with Block Tabs -->
+        <VBox styleClass="card" spacing="16" VBox.vgrow="ALWAYS">
+            <Label text="Answers (60 questions)" styleClass="section-title"/>
+            
+            <!-- Block Navigation Tabs -->
+            <HBox fx:id="blockTabsContainer" spacing="8">
+                <!-- Tabs generated dynamically by controller -->
+            </HBox>
+            
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+                <VBox fx:id="answerGridContainer" spacing="8">
+                    <!-- Answer rows generated dynamically by controller -->
+                </VBox>
+            </ScrollPane>
+        </VBox>
+
+        <!-- Quick Entry -->
+        <VBox styleClass="card" spacing="12">
+            <Label text="Quick Entry" styleClass="section-title"/>
+            <HBox spacing="12">
+                <TextField fx:id="quickEntryField" promptText="Type 60 letters: ABCDABCD..." HBox.hgrow="ALWAYS"/>
+                <Button fx:id="btnParse" text="Parse" styleClass="button-secondary" onAction="#parseQuickEntry"/>
+            </HBox>
+            <Label text="Enter answers in sequence (A, B, C, or D for each question)" styleClass="label-muted"/>
+        </VBox>
+
+        <!-- Action Buttons -->
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <Button fx:id="btnSave" text="💾 Save" styleClass="button-primary" onAction="#saveKey"/>
+            <Button fx:id="btnImportCsv" text="📥 Import CSV" styleClass="button-secondary" onAction="#importCsv"/>
+            <Button fx:id="btnExportCsv" text="📤 Export CSV" styleClass="button-secondary" onAction="#exportCsv"/>
+        </HBox>
+    </VBox>
+
+</HBox>

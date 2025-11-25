@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.controller.HomeController"
+      spacing="24"
+      styleClass="screen-container">
+
+    <padding>
+        <Insets top="32" right="32" bottom="32" left="32"/>
+    </padding>
+
+    <!-- Screen Title -->
+    <Label text="Dashboard" styleClass="screen-title"/>
+
+    <!-- Quick Action Cards Grid -->
+    <GridPane hgap="16" vgap="16">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="50"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints/>
+            <RowConstraints/>
+        </rowConstraints>
+
+        <!-- Scan Card -->
+        <VBox fx:id="cardScan" styleClass="action-card" GridPane.columnIndex="0" GridPane.rowIndex="0"
+              onMouseClicked="#onScanClick">
+            <Label text="📄" styleClass="card-icon"/>
+            <Label text="Scan" styleClass="card-title"/>
+            <Label text="Process single OMR sheet" styleClass="card-description"/>
+        </VBox>
+
+        <!-- Batch Card -->
+        <VBox fx:id="cardBatch" styleClass="action-card" GridPane.columnIndex="1" GridPane.rowIndex="0"
+              onMouseClicked="#onBatchClick">
+            <Label text="📁" styleClass="card-icon"/>
+            <Label text="Batch" styleClass="card-title"/>
+            <Label text="Process multiple sheets" styleClass="card-description"/>
+        </VBox>
+
+        <!-- Answer Keys Card -->
+        <VBox fx:id="cardKeys" styleClass="action-card" GridPane.columnIndex="0" GridPane.rowIndex="1"
+              onMouseClicked="#onKeysClick">
+            <Label text="🔑" styleClass="card-icon"/>
+            <Label text="Answer Keys" styleClass="card-title"/>
+            <Label text="Manage answer keys" styleClass="card-description"/>
+        </VBox>
+
+        <!-- History Card -->
+        <VBox fx:id="cardHistory" styleClass="action-card" GridPane.columnIndex="1" GridPane.rowIndex="1"
+              onMouseClicked="#onHistoryClick">
+            <Label text="📊" styleClass="card-icon"/>
+            <Label text="History" styleClass="card-title"/>
+            <Label text="View past results" styleClass="card-description"/>
+        </VBox>
+    </GridPane>
+
+    <!-- Recent Activity Section -->
+    <VBox spacing="12" VBox.vgrow="ALWAYS">
+        <HBox alignment="CENTER_LEFT" spacing="16">
+            <Label text="Recent Activity" styleClass="section-title"/>
+            <Label text="View All →" styleClass="link-text"/>
+        </HBox>
+
+        <ListView fx:id="activityList" styleClass="activity-list" VBox.vgrow="ALWAYS">
+            <!-- Populated dynamically -->
+        </ListView>
+    </VBox>
+
+</VBox>
