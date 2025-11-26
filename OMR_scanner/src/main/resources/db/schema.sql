@@ -1,5 +1,5 @@
 -- ============================================
--- OMR Reader V2 - Database Schema
+-- Portable OMR Scanner - Database Schema
 -- SQLite Database
 -- ============================================
 
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS scan_answers (
     question_number INTEGER NOT NULL,
     detected_answer TEXT CHECK(detected_answer IN ('A', 'B', 'C', 'D') OR detected_answer IS NULL),
     correct_answer TEXT CHECK(correct_answer IN ('A', 'B', 'C', 'D') OR correct_answer IS NULL),
-    status TEXT NOT NULL DEFAULT 'valid' CHECK(status IN ('correct', 'wrong', 'empty', 'invalid', 'valid')),
+    status TEXT NOT NULL DEFAULT 'valid' CHECK(status IN ('valid', 'empty', 'multiple', 'uncertain', 'error')),
     confidence REAL DEFAULT 1.0,
     is_correct INTEGER DEFAULT 0,
     FOREIGN KEY (scan_id) REFERENCES scans(id) ON DELETE CASCADE,

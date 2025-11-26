@@ -95,6 +95,18 @@ public class ScanController implements Initializable {
     // =========================================
 
     private void setupControls() {
+        // Setup ID field validation
+        if (txtStudentId != null) {
+            txtStudentId.textProperty().addListener((obs, oldVal, newVal) -> {
+                validateStudentId(newVal);
+            });
+        }
+        if (txtTestId != null) {
+            txtTestId.textProperty().addListener((obs, oldVal, newVal) -> {
+                validateTestId(newVal);
+            });
+        }
+        
         // Setup zoom slider
         if (zoomSlider != null) {
             zoomSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -264,7 +276,13 @@ public class ScanController implements Initializable {
                 
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    log("✗ Processing failed: " + e.getMessage());
+                    String errorMsg = e.getMessage();
+                    if (e.getCause() != null) {
+                        errorMsg += " (Caused by: " + e.getCause().getMessage() + ")";
+                    }
+                    log("✗ Processing failed: " + errorMsg);
+                    e.printStackTrace(); // Print full stack trace to console
+                    showError("Processing Failed", errorMsg);
                     isProcessing = false;
                     updateButtonStates();
                 });
@@ -279,6 +297,41 @@ public class ScanController implements Initializable {
             return;
         }
         
+        // Get IDs from text fields (manual input)
+        String studentId = txtStudentId.getText() != null ? txtStudentId.getText().trim() : null;
+        String testId = txtTestId.getText() != null ? txtTestId.getText().trim() : null;
+        
+        // Validate IDs
+        if (studentId == null || studentId.isEmpty() || !studentId.matches("\\d{10}")) {
+            showWarning("Invalid Student ID", "Please enter a valid 10-digit Student ID.");
+            return;
+        }
+        
+        if (testId == null || testId.isEmpty() || !testId.matches("\\d{4}")) {
+            showWarning("Invalid Test ID", "Please enter a valid 4-digit Test ID.");
+            return;
+        }
+        
+        // Update scan with manual IDs
+        currentScan.setStudentId(studentId);
+        currentScan.setTestId(testId);
+        
+        // Try to auto-detect answer key if not selected
+        if (cmbAnswerKey.getValue() == null && testId != null) {
+            try {
+                Optional<AnswerKey> detected = answerKeyService.findByTestId(testId);
+                if (detected.isPresent()) {
+                    currentScan.setAnswerKeyId(detected.get().getId());
+                    Platform.runLater(() -> {
+                        cmbAnswerKey.setValue(detected.get());
+                        lblAutoDetected.setText("(Auto-detected)");
+                    });
+                }
+            } catch (SQLException e) {
+                // Ignore - user can select manually
+            }
+        }
+        
         try {
             currentScan = scanService.save(currentScan);
             log("✓ Scan saved to database (ID: " + currentScan.getId() + ")");
@@ -286,6 +339,48 @@ public class ScanController implements Initializable {
         } catch (SQLException e) {
             log("✗ Save failed: " + e.getMessage());
             showError("Save Failed", e.getMessage());
+        }
+    }
+    
+    private void validateStudentId(String value) {
+        if (value == null || value.isEmpty()) {
+            lblStudentIdStatus.setText("");
+            return;
+        }
+        
+        if (value.matches("\\d{10}")) {
+            lblStudentIdStatus.setText("✓ Valid");
+            lblStudentIdStatus.getStyleClass().removeAll("label-error");
+            if (!lblStudentIdStatus.getStyleClass().contains("label-success")) {
+                lblStudentIdStatus.getStyleClass().add("label-success");
+            }
+        } else {
+            lblStudentIdStatus.setText("✗ Invalid (must be 10 digits)");
+            lblStudentIdStatus.getStyleClass().removeAll("label-success");
+            if (!lblStudentIdStatus.getStyleClass().contains("label-error")) {
+                lblStudentIdStatus.getStyleClass().add("label-error");
+            }
+        }
+    }
+    
+    private void validateTestId(String value) {
+        if (value == null || value.isEmpty()) {
+            lblTestIdStatus.setText("");
+            return;
+        }
+        
+        if (value.matches("\\d{4}")) {
+            lblTestIdStatus.setText("✓ Valid");
+            lblTestIdStatus.getStyleClass().removeAll("label-error");
+            if (!lblTestIdStatus.getStyleClass().contains("label-success")) {
+                lblTestIdStatus.getStyleClass().add("label-success");
+            }
+        } else {
+            lblTestIdStatus.setText("✗ Invalid (must be 4 digits)");
+            lblTestIdStatus.getStyleClass().removeAll("label-success");
+            if (!lblTestIdStatus.getStyleClass().contains("label-error")) {
+                lblTestIdStatus.getStyleClass().add("label-error");
+            }
         }
     }
 

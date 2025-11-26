@@ -22,8 +22,21 @@ public class ScanService {
     public ScanService() {
         this.db = DatabaseService.getInstance();
         this.answerKeyService = new AnswerKeyService();
-        // Default to mock processor
-        this.processor = new MockOMRProcessor();
+        // Try to use real processor, fall back to mock if OpenCV not available
+        try {
+            OMRProcessor realProcessor = new OMRProcessor();
+            if (realProcessor.isReady()) {
+                this.processor = realProcessor;
+                System.out.println("✓ Using OMRProcessor (OpenCV)");
+            } else {
+                System.err.println("⚠ OpenCV not available, using MockOMRProcessor");
+                this.processor = new MockOMRProcessor();
+            }
+        } catch (Exception e) {
+            System.err.println("✗ Failed to initialize OMRProcessor, using MockOMRProcessor: " + e.getMessage());
+            e.printStackTrace();
+            this.processor = new MockOMRProcessor();
+        }
     }
 
     /**
@@ -57,14 +70,34 @@ public class ScanService {
         // Process the image
         OMRResult result = processor.processImage(imageFile);
         
+        // Check if processing failed
+        if (!result.isSuccessful()) {
+            throw new RuntimeException("OMR processing failed: " + 
+                (result.getErrorMessage() != null ? result.getErrorMessage() : "Unknown error"));
+        }
+        
         // Create Scan object
         Scan scan = new Scan();
         scan.setImagePath(imageFile.getAbsolutePath());
         
         // Auto-detect answer key if not provided
+        // Note: Test ID is now entered manually, so auto-detect happens in UI
+        // This is kept for backward compatibility
         if (answerKey == null && result.isSuccessful() && result.getTestId() != null) {
             Optional<AnswerKey> detected = answerKeyService.findByTestId(result.getTestId());
             answerKey = detected.orElse(null);
+        }
+        
+        // Ensure answer key items are loaded before grading
+        if (answerKey != null && (answerKey.getItems() == null || answerKey.getItems().isEmpty())) {
+            try {
+                Optional<AnswerKey> keyWithItems = answerKeyService.findById(answerKey.getId());
+                if (keyWithItems.isPresent()) {
+                    answerKey = keyWithItems.get();
+                }
+            } catch (SQLException e) {
+                System.err.println("Failed to load answer key items: " + e.getMessage());
+            }
         }
         
         // Populate from result and grade
@@ -398,6 +431,45 @@ public class ScanService {
     }
 
     /**
+     * Map ScanAnswer.AnswerStatus to database constraint values.
+     * Database expects: 'valid', 'empty', 'multiple', 'uncertain', 'error'
+     */
+    private String mapStatusToDatabase(ScanAnswer.AnswerStatus status, String detectedAnswer, double confidence) {
+        if (status == null) {
+            return "valid";
+        }
+        
+        // Check if detected answer is "MULTIPLE" (from OMRResult)
+        if ("MULTIPLE".equals(detectedAnswer)) {
+            return "multiple";
+        }
+        
+        switch (status) {
+            case CORRECT:
+            case WRONG:
+                // Check if confidence is low - map to 'uncertain'
+                if (confidence < 0.7) {
+                    return "uncertain";
+                }
+                // Graded answers with high confidence are considered 'valid' in the database
+                return "valid";
+            case EMPTY:
+                return "empty";
+            case INVALID:
+                // INVALID status - map to 'error' for database
+                return "error";
+            case VALID:
+                // Check if confidence is low - map to 'uncertain'
+                if (confidence < 0.7) {
+                    return "uncertain";
+                }
+                return "valid";
+            default:
+                return "valid";
+        }
+    }
+    
+    /**
      * Insert scan answers.
      */
     private void insertAnswers(long scanId, List<ScanAnswer> answers) throws SQLException {
@@ -409,11 +481,21 @@ public class ScanService {
         
         try (PreparedStatement pstmt = db.getConnection().prepareStatement(sql)) {
             for (ScanAnswer ans : answers) {
+                // Ensure status is never null
+                ScanAnswer.AnswerStatus status = ans.getStatus();
+                if (status == null) {
+                    status = ScanAnswer.AnswerStatus.VALID;
+                }
+                
+                // Map ScanAnswer.AnswerStatus to database constraint values
+                // Database expects: 'valid', 'empty', 'multiple', 'uncertain', 'error'
+                String statusValue = mapStatusToDatabase(status, ans.getDetectedAnswer(), ans.getConfidence());
+                
                 pstmt.setLong(1, scanId);
                 pstmt.setInt(2, ans.getQuestionNumber());
                 pstmt.setString(3, ans.getDetectedAnswer());
                 pstmt.setString(4, ans.getCorrectAnswer());
-                pstmt.setString(5, ans.getStatus().getValue());
+                pstmt.setString(5, statusValue);
                 pstmt.setDouble(6, ans.getConfidence());
                 pstmt.setInt(7, ans.isCorrect() ? 1 : 0);
                 pstmt.addBatch();

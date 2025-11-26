@@ -8,12 +8,12 @@ import javafx.stage.Stage;
 import org.example.service.DatabaseService;
 
 /**
- * OMR Reader V2 - Main Application
+ * Portable OMR Scanner - Main Application
  * Entry point for the JavaFX application
  */
 public class Main extends Application {
 
-    private static final String APP_TITLE = "OMR Reader V2";
+    private static final String APP_TITLE = "Portable OMR Scanner";
     private static final int WINDOW_WIDTH = 1200;
     private static final int WINDOW_HEIGHT = 800;
 

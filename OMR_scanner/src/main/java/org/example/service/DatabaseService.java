@@ -143,15 +143,15 @@ public class DatabaseService {
         
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("win")) {
-            // Windows: %APPDATA%\OMR Reader V2
+            // Windows: %APPDATA%\Portable OMR Scanner
             appData = System.getenv("APPDATA");
             if (appData == null) {
                 appData = userHome + "\\AppData\\Roaming";
             }
-            return appData + "\\OMR Reader V2\\" + DB_FILENAME;
+            return appData + "\\Portable OMR Scanner\\" + DB_FILENAME;
         } else if (os.contains("mac")) {
-            // macOS: ~/Library/Application Support/OMR Reader V2
-            return userHome + "/Library/Application Support/OMR Reader V2/" + DB_FILENAME;
+            // macOS: ~/Library/Application Support/Portable OMR Scanner
+            return userHome + "/Library/Application Support/Portable OMR Scanner/" + DB_FILENAME;
         } else {
             // Linux/Others: ~/.omr-reader-v2
             return userHome + "/.omr-reader-v2/" + DB_FILENAME;

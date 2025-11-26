@@ -89,6 +89,8 @@ public class MainController implements Initializable {
         loadContent("/fxml/history.fxml");
         setActiveButton(btnHistory);
         updateStatus("Results History");
+        // HistoryController will automatically load data in initialize()
+        // Scans are ordered by created_at DESC, so most recent appear first
     }
 
     // =========================================

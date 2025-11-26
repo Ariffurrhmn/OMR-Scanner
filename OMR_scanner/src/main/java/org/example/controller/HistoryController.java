@@ -101,6 +101,16 @@ public class HistoryController implements Initializable {
         setupTable();
         setupFilters();
         loadData();
+        
+        // Refresh data when tab becomes visible (if needed)
+        // This ensures recent scans appear immediately
+    }
+    
+    /**
+     * Public method to refresh data - can be called from MainController if needed
+     */
+    public void refresh() {
+        loadData();
     }
 
     // =========================================
@@ -111,9 +121,13 @@ public class HistoryController implements Initializable {
         if (tblResults == null) return;
 
         tblResults.setItems(scanRows);
+        
+        // Make table editable for checkbox column
+        tblResults.setEditable(true);
 
         // Checkbox column
         if (colCheckbox != null) {
+            colCheckbox.setEditable(true);
             colCheckbox.setCellValueFactory(data -> data.getValue().selectedProperty());
             colCheckbox.setCellFactory(CheckBoxTableCell.forTableColumn(colCheckbox));
         }
@@ -201,6 +215,10 @@ public class HistoryController implements Initializable {
         tblResults.setRowFactory(tv -> {
             TableRow<ScanRow> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
+                // Don't interfere with checkbox clicks
+                if (event.getTarget() instanceof CheckBox) {
+                    return;
+                }
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     viewDetails();
                 }
@@ -431,9 +449,18 @@ public class HistoryController implements Initializable {
         File file = fileChooser.showSaveDialog(null);
         if (file != null) {
             try {
-                List<Scan> scansToExport = selected.stream()
-                    .map(row -> row.scan)
-                    .collect(Collectors.toList());
+                // Load full scan data with answers for each selected scan
+                List<Scan> scansToExport = new ArrayList<>();
+                for (ScanRow row : selected) {
+                    Optional<Scan> fullScan = scanService.findById(row.scan.getId());
+                    if (fullScan.isPresent()) {
+                        scansToExport.add(fullScan.get());
+                    } else {
+                        // Fallback to row.scan if full scan not found
+                        scansToExport.add(row.scan);
+                    }
+                }
+                
                 exportService.exportScans(scansToExport, file);
                 showInfo("Export Successful", String.format("Exported %d scan(s) to %s",
                     scansToExport.size(), file.getName()));

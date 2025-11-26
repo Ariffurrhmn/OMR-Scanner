@@ -67,13 +67,13 @@
             
             <HBox spacing="24">
                 <VBox spacing="4">
-                    <Label text="Student ID" styleClass="label-muted"/>
-                    <TextField fx:id="txtStudentId" editable="false" styleClass="id-field"/>
+                    <Label text="Student ID (10 digits)" styleClass="label-muted"/>
+                    <TextField fx:id="txtStudentId" promptText="Enter Student ID" styleClass="id-field"/>
                     <Label fx:id="lblStudentIdStatus" styleClass="label-success"/>
                 </VBox>
                 <VBox spacing="4">
-                    <Label text="Test ID" styleClass="label-muted"/>
-                    <TextField fx:id="txtTestId" editable="false" styleClass="id-field"/>
+                    <Label text="Test ID (4 digits)" styleClass="label-muted"/>
+                    <TextField fx:id="txtTestId" promptText="Enter Test ID" styleClass="id-field"/>
                     <Label fx:id="lblTestIdStatus" styleClass="label-success"/>
                 </VBox>
             </HBox>

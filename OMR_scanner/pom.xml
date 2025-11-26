@@ -9,8 +9,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>OMR Reader V2</name>
-    <description>Optical Mark Recognition Reader for 60-question multiple-choice answer sheets</description>
+    <name>Portable OMR Scanner</name>
+    <description>Portable Optical Mark Recognition Scanner for 60-question multiple-choice answer sheets</description>
 
     <properties>
         <!-- Java Version -->
