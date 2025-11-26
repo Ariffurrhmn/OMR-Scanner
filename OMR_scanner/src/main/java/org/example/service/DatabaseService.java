@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * Singleton service for SQLite database connection management.
  * 
  * Handles:
- * - Database file creation in user data directory
+ * - Database file creation in DB folder inside application directory (portable)
  * - Connection pooling (single connection for SQLite)
  * - Schema initialization
  * - Connection lifecycle
@@ -131,31 +131,21 @@ public class DatabaseService {
     
     /**
      * Get the full path to the database file.
+     * Database is stored in a DB folder inside the application directory for portability.
      */
     public String getDbPath() {
         if (dbPath != null) {
             return dbPath;
         }
         
-        // Use user's app data directory
-        String userHome = System.getProperty("user.home");
-        String appData;
+        // Get the application directory (where the JAR is running from)
+        String appDir = System.getProperty("user.dir");
         
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            // Windows: %APPDATA%\Portable OMR Scanner
-            appData = System.getenv("APPDATA");
-            if (appData == null) {
-                appData = userHome + "\\AppData\\Roaming";
-            }
-            return appData + "\\Portable OMR Scanner\\" + DB_FILENAME;
-        } else if (os.contains("mac")) {
-            // macOS: ~/Library/Application Support/Portable OMR Scanner
-            return userHome + "/Library/Application Support/Portable OMR Scanner/" + DB_FILENAME;
-        } else {
-            // Linux/Others: ~/.omr-reader-v2
-            return userHome + "/.omr-reader-v2/" + DB_FILENAME;
-        }
+        // Create DB folder path
+        String dbFolder = appDir + java.io.File.separator + "DB";
+        String dbFile = dbFolder + java.io.File.separator + DB_FILENAME;
+        
+        return dbFile;
     }
     
     /**
